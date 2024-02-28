@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Data Example</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Real-Time Data Example</h1>
+    <button onclick="generateAndSendRandomNumber()">Generate Random Number</button>
+    <p id="random-number"></p>
+    <div id="dataDisplay"></div>
+    <table id="data-table">
+        <thead>
+          <tr>
+            <th>Enrollment Number</th>
+            <th>Altitude</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Table rows will be populated dynamically -->
+        </tbody>
+      </table>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+socket.on('connect', () => {
+    console.log('Connected to server');
+});
+let bada_global_object;
+
+socket.on('dataUpdate', (data) => {
+    console.log(data);
+    displayData(data);
+    
+    // bada_global_object = data;
+    // fetchData();
+});
+
+function displayData(data) {
+    const tableBody = document.getElementById('table-body');
+
+// Create a new table row
+const newRow = document.createElement('tr');
+
+// Create table data cells for enrollment and altitude
+const enrollmentCell = document.createElement('td');
+enrollmentCell.textContent = data.enrollment;
+newRow.appendChild(enrollmentCell);
+
+const altitudeCell = document.createElement('td');
+altitudeCell.textContent = data.altitude;
+newRow.appendChild(altitudeCell);
+
+// Append the new row to the table body
+tableBody.appendChild(newRow);
+}
+
+        function generateAndSendRandomNumber() {
+            // Generate a random number
+            const randomNumber = Math.floor(Math.random() * 1000);
+
+            // Display the random number on the HTML page
+            document.getElementById('random-number').innerText = `Random Number: ${randomNumber}`;
+
+            // Now, you can send this number to the backend using an HTTP request
+            sendRandomNumberToBackend(randomNumber);
+        }
+        function sendRandomNumberToBackend(randomNumber) {
+            // Use fetch or another method to send the random number to the backend
+            fetch('/api/random', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ randomNumber }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to send random number to the backend');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response from backend:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+    <table>
+        <thead>
+            <tr>
+                <th>Enrollment Number</th>
+                <th>Latitude</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body"></tbody>
+    </table>
+
+    <script>
+        const fetchData = async () => {
+            try {
+                const response = await fetch('/home/teacher');
+                const data = await response.json();
+
+                // Clear the existing table body
+                const tableBody = document.getElementById('data-table-body');
+                tableBody.innerHTML = '';
+
+                // Create a new row for each entry in the data
+                data.forEach(entry => {
+                    const row = document.createElement('tr');
+                    const enrollmentCell = document.createElement('td');
+                    enrollmentCell.textContent = entry.enrollment;
+                    const latitudeCell = document.createElement('td');
+                    latitudeCell.textContent = entry.latitude;
+
+                    // Append cells to the row
+                    row.appendChild(enrollmentCell);
+                    row.appendChild(latitudeCell);
+
+                    // Append the row to the table body
+                    tableBody.appendChild(row);
+                });
+               
+    // const tableBody = document.querySelector('#data-table tbody');
+    // const enrollment = bada_global_object.enrollment;
+    // const altitude = bada_global_object.altitude;
+
+    // // Create a new row and populate it with enrollment and altitude data
+    // const newRow = document.createElement('tr');
+    // newRow.innerHTML = `
+    //   <td>${enrollment}</td>
+    //   <td>${altitude}</td>
+    // `;
+
+    // // Append the new row to the table body
+    // tableBody.appendChild(newRow);
+  
+                console.log(bada_global_object);
+            } catch (error) {
+                console.error('Error fetching real-time data:', error);
+            }
+        };
+
+        // Fetch and display real-time data on page load
+        const initialFetch = async () => {
+            fetchData();
+        };
+
+        initialFetch();
+
+        // Optionally, you can set up a periodic refresh
+        setInterval(fetchData, 2000); // Refresh every 5 seconds
+    </script>
+</body>
+</html>

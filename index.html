@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <h1>Geolocation Information</h1>
+    <label for="enrollmentNumber">Enrollment Number:</label>
+    <input type="number" id="enrollmentNumber">
+    
+    <div id="locationData">
+        <p><strong>Latitude:</strong> <span id="lat"></span></p>
+        <p><strong>Longitude:</strong> <span id="lon"></span></p>
+        <p><strong>Altitude:</strong> <span id="alt"></span> meters</p>
+    </div>
+    <button id="sendLocationButton">Send Location</button>
+    <script>
+        var locationObject;
+
+        function locationData(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var altitude = position.coords.altitude;
+            var accuracy = position.coords.accuracy;
+            var altitudeAccuracy = position.coords.altitudeAccuracy;
+            var heading = position.coords.heading;
+            var speed = position.coords.speed;
+            var timestamp = position.timestamp;
+
+            // Display values on the screen
+            document.querySelector('#lat').innerHTML = latitude;
+            document.querySelector('#lon').innerHTML = longitude;
+            document.querySelector('#alt').innerHTML = altitude;
+
+            // Get enrollment number from input field
+            var enrollmentNumber = document.querySelector('#enrollmentNumber').value;
+
+            // Create a JSON object with the values and enrollment number
+            locationObject = {
+                latitude: latitude,
+                longitude: longitude,
+                altitude: altitude,
+                accuracy: accuracy,
+                altitudeAccuracy: altitudeAccuracy,
+                heading: heading,
+                speed: speed,
+                timestamp: timestamp,
+                enrollment: enrollmentNumber
+            };
+
+            // Log the JSON object to the console
+            console.log('Location Object:', locationObject);
+            // sendLocationToServer(locationObject);
+        }
+
+        function error() {
+            alert("Sorry, no position available.");
+        }
+
+        const options = {
+            enableHighAccuracy: true,
+            maximumAge: 30000,
+            timeout: 27000,
+        };
+
+        const watchID = navigator.geolocation.watchPosition(locationData, error, options);
+        
+
+        document.getElementById('sendLocationButton').addEventListener('click', function () {
+            // Check if locationObject is defined before sending4
+// console.log("hey this is: ",locationObject);
+
+            if(locationObject) {
+                sendLocationToServer(locationObject);
+                sendPythoncode();
+            } 
+            else{
+                alert('Please wait for location data to be retrieved.');
+            }
+        });
+
+//  function sendPythoncode(){
+//     fetch('/identify', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(locationObject),
+//             })
+//             .then(response => response.json())
+//             .then(data => console.log('Server response:', data))
+//             .catch(error => console.error('Error:', error));  
+//  }      
+        function sendLocationToServer(locationObject) {
+            // Send a POST request to the server API endpoint
+            fetch('/home/teacher', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(locationObject),
+            })
+            .then(response => response.json())
+            .then(data => console.log('Server response:', data))
+            .catch(error => console.error('Error:', error));
+        }
+
+      
+
+    </script>
+</body>
+</html>

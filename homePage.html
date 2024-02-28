@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #001f3f; /* Dark Blue Background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Arrange children in a column */
+            height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 1em;
+        }
+
+        nav {
+            display: flex;
+            background-color: #003366; /* Dark Blue */
+            border-radius: 10px;
+            overflow: hidden;
+            width: 70%; /* Adjust the width as needed */
+            margin-top: 1em; /* Add margin to separate from the header */
+        }
+
+        nav a {
+            flex: 1;
+            text-decoration: none;
+            color: #fff;
+            padding: 2em; /* Larger padding for a bigger appearance */
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #005cbf; /* Darker Blue on Hover */
+        }
+
+        .container {
+            width: 50%;
+        }
+
+        /* Responsive styles for smaller screens */
+        @media screen and (max-width: 600px) {
+            nav {
+                flex-direction: column; /* Stack navigation links in a column */
+                width: 90%; /* Adjust the width for smaller screens */
+            }
+
+            nav a {
+                width: 100%; /* Make navigation links take full width */
+                margin-bottom: 0.5em; /* Add spacing between navigation links */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="color: #fff;">Interactive Home Page</h1>
+    </header>
+
+    <nav>
+        <a href="/home/student" class="container">Student</a>
+        <a href="/home/teacher" class="container">Teacher</a>
+    </nav>
+</body>
+</html>
